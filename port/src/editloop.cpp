@@ -855,6 +855,7 @@ int EditLoop() {
         }
     }
 
+#ifdef PAL
     static int debug_flag = 0;
 
     // Debug builds draw the editor debug overlay and open the debug menu from the pad.
@@ -911,6 +912,7 @@ int EditLoop() {
             EdDDrawFont();
         }
     }
+#endif
 
     if (GameMode != ED_MODE_GEORAMA_MENU && GameMode != ED_MODE_GEORAMA && loop_counter > 10) {
         sceVu0FVECTOR eye_pos;
@@ -1048,11 +1050,13 @@ int EditLoop() {
     key_counter = 0;
 
     // Debug builds leave the editor through a fade on a two-button chord.
+#ifdef PAL
     if (DebugMode != 0 && GamePad.On(PAD_SELECT) != 0 && GamePad.On(PAD_START) != 0 && end_counter == 0) {
         end_counter = 100;
         EdFadeOut(0x40, 0.0f, 0.0f, 0.0f);
         end_code = 1;
     }
+#endif
 
     if (exit_loop != 0) {
         EditExit();

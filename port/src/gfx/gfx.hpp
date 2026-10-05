@@ -18,9 +18,12 @@ struct SDL_Window;
 namespace gfx {
 
 // The game's 2D space. 2D draws, scissors and main-target rectangles are given in it and mapped
-// to the target, letterboxed on the main target.
+// to the target, letterboxed on the main target. Its height is the region's (DC_REGION); either
+// way it fills a 4:3 picture kFrameHeight logical columns tall, as on a television, so NTSC's
+// rows are taller than they are wide.
 inline constexpr float kLogicalWidth = 640.0f;
-inline constexpr float kLogicalHeight = 480.0f;
+inline constexpr float kLogicalHeight = DC_LOGICAL_HEIGHT;
+inline constexpr float kFrameHeight = kLogicalWidth * 0.75f;
 
 inline constexpr uint32_t kDepthQueryCount = 16;
 

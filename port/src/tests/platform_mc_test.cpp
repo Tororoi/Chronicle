@@ -25,7 +25,11 @@ constexpr int         kImageSize = 0x136A7;
 constexpr int         kSaveDataSize = 0x131C0;
 constexpr int         kChecksumOffset = 0x131E0;
 constexpr int         kSaveMapNoOffset = 0x1C8;
+#ifdef PAL
 constexpr const char *kSaveDir = "BESCES-50295dkcloud";
+#else
+constexpr const char *kSaveDir = "BASCUS-97111dkcloud";
+#endif
 
 // SetBuff and the game's int casts need the buffer below 2 GiB: static
 // storage in the non-PIE executable is.

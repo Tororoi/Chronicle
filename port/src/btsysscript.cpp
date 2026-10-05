@@ -31,6 +31,7 @@ int GetStackInt(RS_STACKDATA *argument) {
 } // namespace
 
 void BtSystemScriptLoad(int floor) {
+#ifdef PAL
     char  path[32];
     char  mes_path[40];
     int   read_size;
@@ -50,6 +51,20 @@ void BtSystemScriptLoad(int floor) {
     BtSystemScriptFileBuffer.Alloc((mes_size >> 4) + 1);
     EdSetEventScript(g_event_data, mes, &BtSystemScriptFileBuffer);
     AddSystemEventScript();
+#else
+    // NTSC loads no message file beside the script.
+    char path[44];
+    int  read_size;
+
+    sprintf(path, "dun/script/d0%d/event.stb", floor + 1);
+    BtSystemScriptFileBuffer.used = 0;
+    g_event_data = reinterpret_cast<char *>(BtSystemScriptFileBuffer.base + BtSystemScriptFileBuffer.used * 0x10);
+    LoadFile(path, g_event_data, &read_size);
+    wait_now_loading_vsync();
+    BtSystemScriptFileBuffer.Alloc((read_size >> 4) + 1);
+    EdSetEventScript(g_event_data, NULL, &BtSystemScriptFileBuffer);
+    AddSystemEventScript();
+#endif
 }
 
 int BtSystemScriptRun(int event, CDataAlloc2<1> *arena) {

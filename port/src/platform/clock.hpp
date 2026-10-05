@@ -35,6 +35,9 @@ using ClockIdleHook = void (*)();
 // a display frame) and returns true while it has more to do before that time.
 using ClockWaitHook = bool (*)(double fraction, std::chrono::steady_clock::time_point next_tick);
 
+// The game's VSync rate for the region being built: 50 for PAL, 60 for NTSC (DC_REGION).
+extern const double kRegionTickRate;
+
 void ClockSetTickRate(double hertz);
 
 double ClockTickRate();

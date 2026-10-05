@@ -218,8 +218,13 @@ void CTextureManager::Initialize(int size) {
 
     for (int i = 0; i < 72; i++) {
         blocks[i].Initialize();
+#ifdef PAL
         blocks[i].vram_top = mgTopVRAM;
         blocks[i].vram_end = mgTopVRAM;
+#else
+        blocks[i].vram_top = 6720;
+        blocks[i].vram_end = 6720;
+#endif
     }
     for (int i = 0; i < 196; i++) {
         textures[i].Initialize();
@@ -270,9 +275,15 @@ void CTextureManager::EnterFixTextureZ(u_char *buffer) {
     int          width = head->image_width;
     int          height = head->image_height;
 
-    if (width != 640 || height > SCREEN_HALF_HEIGHT || picture->image_type != TIM2_IDTEX8) {
+#ifdef PAL
+    if (width != 640 || height > 240 || picture->image_type != TIM2_IDTEX8) {
         return;
     }
+#else
+    if (width != 640 || height != 224 || picture->image_type != TIM2_IDTEX8) {
+        return;
+    }
+#endif
 
     u_char   *image = (u_char *) picture + picture->header_size;
     u_char   *clut = image + picture->image_size;

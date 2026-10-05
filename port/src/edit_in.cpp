@@ -848,6 +848,7 @@ int EditInLoop() {
     EdIn_goto_return_menu = 0;
     static int end_count = 0;
 
+#ifdef PAL
     if (GamePad.AllOn() != 0 || DebugMode) {
         EdIn_key_counter = 0;
     }
@@ -858,6 +859,11 @@ int EditInLoop() {
         end_count = 100;
         EdFadeOut(64, zero, zero, zero);
     }
+#else
+    if (GamePad.AllOn() != 0) {
+        EdIn_key_counter = 0;
+    }
+#endif
 
     if (end_count == 1) {
         end_count = 0;
@@ -1020,6 +1026,7 @@ static void MainDraw() {
 
     EdSystemMesStep();
     EdSystemMesDraw();
+#ifdef PAL
     static int debug_flag = 0;
     static int debug_menu_mode = 0;
 
@@ -1053,6 +1060,7 @@ static void MainDraw() {
             EdDDrawFont();
         }
     }
+#endif
 
     if (EdDebugParamDrawOff == 0) {
         char pause_texture[] = "pause";
@@ -1232,9 +1240,13 @@ static void MoveCharacter() {
         EdIn_Chara->GetRotation(rotation);
         EPARTS_FUNC_DATA *jump;
 
+#ifdef PAL
         jump = NULL;
 
         if ((DebugMode && GamePad.Down(PAD_SELECT)) || (jump = SearchMapJump(position, rotation))) {
+#else
+        if (jump = SearchMapJump(position, rotation)) {
+#endif
             int motion;
 
             EdMoveCharaInit();

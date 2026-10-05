@@ -169,6 +169,7 @@ int TitleLoop() {
                 }
 
                 switch (CCursol.select) {
+#ifdef PAL
                     case TITLE_MENU_NEW_GAME:
                         CCursol.Set(304.0f);
                         break;
@@ -178,6 +179,17 @@ int TitleLoop() {
                     case TITLE_MENU_OPTION:
                         CCursol.Set(364.0f);
                         break;
+#else
+                    case TITLE_MENU_NEW_GAME:
+                        CCursol.Set(288.0f);
+                        break;
+                    case TITLE_MENU_LOAD:
+                        CCursol.Set(316.0f);
+                        break;
+                    case TITLE_MENU_OPTION:
+                        CCursol.Set(348.0f);
+                        break;
+#endif
                 }
 
                 if (GamePad.Down(PAD_START) || GamePad.Down(PAD_CROSS)) {
@@ -410,7 +422,11 @@ void TitleDraw() {
             {CRect_i_(0, 169, 640, 84),  CRect_i_(1, 84, 639, 45),  114},
             {CRect_i_(0, 253, 640, 84),  CRect_i_(1, 126, 639, 45), 114},
             {CRect_i_(0, 336, 640, 105), CRect_i_(1, 167, 639, 57), 114},
+#ifdef PAL
             {CRect_i_(0, 441, 640, 39),  CRect_i_(1, 220, 639, 19), 114},
+#else
+            {CRect_i_(0, 440, 640, 8),   CRect_i_(1, 220, 639, 3),  114},
+#endif
         };
         TitlePortFog(bands);
 

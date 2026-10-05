@@ -80,6 +80,26 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
             }
+        },
+        {
+            "name": "macos-arm64-ntsc",
+            "displayName": "macOS arm64, NTSC, Debug (Homebrew LLVM)",
+            "inherits": "macos",
+            "binaryDir": "${sourceDir}/port/build/macos-arm64-ntsc",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "DC_REGION": "NTSC"
+            }
+        },
+        {
+            "name": "macos-arm64-ntsc-release",
+            "displayName": "macOS arm64, NTSC, Release (Homebrew LLVM)",
+            "inherits": "macos",
+            "binaryDir": "${sourceDir}/port/build/macos-arm64-ntsc-release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "DC_REGION": "NTSC"
+            }
         }
     ],
     "buildPresets": [
@@ -98,6 +118,14 @@
         {
             "name": "macos-arm64-release",
             "configurePreset": "macos-arm64-release"
+        },
+        {
+            "name": "macos-arm64-ntsc",
+            "configurePreset": "macos-arm64-ntsc"
+        },
+        {
+            "name": "macos-arm64-ntsc-release",
+            "configurePreset": "macos-arm64-ntsc-release"
         }
     ],
     "testPresets": [
@@ -130,6 +158,16 @@
             "name": "macos-arm64-release",
             "inherits": "test",
             "configurePreset": "macos-arm64-release"
+        },
+        {
+            "name": "macos-arm64-ntsc",
+            "inherits": "test",
+            "configurePreset": "macos-arm64-ntsc"
+        },
+        {
+            "name": "macos-arm64-ntsc-release",
+            "inherits": "test",
+            "configurePreset": "macos-arm64-ntsc-release"
         }
     ]
 }

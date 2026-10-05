@@ -5,6 +5,8 @@
 #include <string_view>
 #include <vector>
 
+#include "clock.hpp"
+
 enum class ConfigPresentMode {
     Fifo,
     Mailbox,
@@ -22,7 +24,7 @@ struct ConfigKeyBinding {
 };
 
 struct Config {
-    double                        tick_rate = 50.0;
+    double                        tick_rate = kRegionTickRate;
     bool                          debug_mode = true;
     ConfigPresentMode             present_mode = ConfigPresentMode::Fifo;
     bool                          interpolation = true;

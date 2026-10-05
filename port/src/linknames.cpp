@@ -27,17 +27,32 @@
 
 #define PORT_LINK_NAME __attribute__((weak))
 
-// The literals, as the PAL executable has them.
+// The literals, as the executable of the region being built has them.
 PORT_LINK_NAME char       BtAtraShortCharaFile[] = "dun/mainchara/c01d_ex00.chr";
 PORT_LINK_NAME char       BtEffectInfoFile[] = "info.cfg";
 PORT_LINK_NAME char       MdsExtension[] = ".mds";
 PORT_LINK_NAME char       OverMessage[] = " ************* over!!\n";
 PORT_LINK_NAME char       HealEffectTextureName[] = "basefx00";
 PORT_LINK_NAME char       gamemode_empty_string[] = "";
+#ifdef PAL
 PORT_LINK_NAME char       manual_frame_image[] = "#frame_image#640#480#4";
+#else
+PORT_LINK_NAME char       manual_frame_image[] = "#frame_image#640#448#4";
+#endif
 PORT_LINK_NAME char       allmenu_mes[] = "allmenu.mes";
 PORT_LINK_NAME const char CharaFileExtension[5] = ".chr";
+#ifdef PAL
 PORT_LINK_NAME const char FrameImageTexture[] = "#frame_image#640#480#4";
+#else
+PORT_LINK_NAME const char FrameImageTexture[] = "#frame_image#640#448#4";
+#endif
+
+#ifndef PAL
+// NTSC reaches these through a pooled literal (ps2/config/ntsc/object_fixups.json); PAL spells them
+// out where they are used.
+PORT_LINK_NAME char CharaStatusTextureName[] = "charastb";
+PORT_LINK_NAME char stay_frame_name[] = "stayframe";
+#endif
 
 // The title overlay's units declare their own rectangle template rather than rect.hpp's CRect_i_
 // (x, y, width, height in the same four words), and MWCC mangled both to the one name.

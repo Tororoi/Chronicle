@@ -174,9 +174,11 @@ TEST(GfxMisc, TextureReusingFrameTargetKeepsTexelCoordinates) {
         auto quad = Quad(100, 100, 40, 10, {0x80, 0x80, 0x80, 0x80}, 0, 0, 4, 1);
         gfx::Draw2D(gfx::Primitive::Quads, quad, binding, gfx::DrawState{});
     });
-    EXPECT_TRUE(fixture.PixelNear(210, 210, 255, 0, 0));
-    EXPECT_TRUE(fixture.PixelNear(230, 210, 0, 255, 0));
-    EXPECT_TRUE(fixture.PixelNear(250, 210, 0, 0, 255));
-    EXPECT_TRUE(fixture.PixelNear(270, 210, 255, 255, 255));
+    // The quad's middle row, 105, on a 960-pixel 4:3 picture: 210 on PAL, lower on NTSC's taller rows.
+    int y = static_cast<int>(105.0f * 2.0f * (gfx::kFrameHeight / gfx::kLogicalHeight));
+    EXPECT_TRUE(fixture.PixelNear(210, y, 255, 0, 0));
+    EXPECT_TRUE(fixture.PixelNear(230, y, 0, 255, 0));
+    EXPECT_TRUE(fixture.PixelNear(250, y, 0, 0, 255));
+    EXPECT_TRUE(fixture.PixelNear(270, y, 255, 255, 255));
     EXPECT_FALSE(gfx::GetTextureInfo(texture)->frame_target);
 }

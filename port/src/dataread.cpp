@@ -118,7 +118,11 @@ void InitCDFile() {
 int LoadFile(char *path, void *buffer, int *out_size) {
     if (!LoadFile2(path, buffer, out_size, 0)) {
         printf("File open error \"%s\"\n \n \n", path);
+#ifdef PAL
         __assert("etc.cpp", 753, "FALSE");
+#else
+        __assert("etc.cpp", 740, "FALSE");
+#endif
     }
 
     return 1;

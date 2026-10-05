@@ -41,6 +41,11 @@ extern s32 mode;
 extern s32 mc_mode;
 extern s32 NextMapNo;
 
+#ifndef PAL
+// The port's own DebugMode (gameloop.hpp): NTSC 1.02 has none.
+s32 DebugMode = 1;
+#endif
+
 namespace {
 
 // Words of CSaveData::config that main() reads and writes directly.
@@ -371,8 +376,13 @@ void GameApplyLoopResult(int loop_mode, int result) {
     switch (loop_mode) {
         case GAME_MODE_LANGUAGE:
             if (result != 0) {
+#ifdef PAL
                 MapNo = -1;
                 mode = GAME_MODE_MEMORY_CHECK;
+#else
+                MapNo = 801;
+                mode = GAME_MODE_RUSH_MOVIE;
+#endif
             }
             break;
         case GAME_MODE_TITLE:
@@ -699,7 +709,11 @@ int RunGame(int argc, char **argv) {
     }
     if (!DebugMode) {
         MapNo = -1;
+#ifdef PAL
         mode = GAME_MODE_LANGUAGE;
+#else
+        mode = GAME_MODE_MEMORY_CHECK;
+#endif
         GamePad.KeyLock2(1);
     }
     if (g_jump.set) {
@@ -762,7 +776,9 @@ int RunGame(int argc, char **argv) {
             if (FrameBoundaryStop()) {
                 return kExitOk;
             }
+#ifdef PAL
             MGAdjustScreen(ConfigWords()[kConfigScreenX], ConfigWords()[kConfigScreenY]);
+#endif
             ConfigWords()[kConfigGameClear] = GameClearFlag;
 
             MGBeginFrame();

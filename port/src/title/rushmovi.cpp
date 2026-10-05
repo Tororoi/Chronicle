@@ -315,19 +315,35 @@ int RushLoop() {
 static void MotionProcess() {
     switch (CScript.fade) {
         case TSFADE_IN_BLACK:
+#ifdef PAL
             DispFade.FadeInStart(1.2f * CScript.fade_speed, 0);
+#else
+            DispFade.FadeInStart(CScript.fade_speed, 0);
+#endif
             CScript.fade = TSFADE_NONE;
             break;
         case TSFADE_OUT_BLACK:
+#ifdef PAL
             DispFade.FadeOutStart(1.2f * CScript.fade_speed, 0);
+#else
+            DispFade.FadeOutStart(CScript.fade_speed, 0);
+#endif
             CScript.fade = TSFADE_NONE;
             break;
         case TSFADE_IN_WHITE:
+#ifdef PAL
             DispFade.FadeInStart(1.2f * CScript.fade_speed, 1);
+#else
+            DispFade.FadeInStart(CScript.fade_speed, 1);
+#endif
             CScript.fade = TSFADE_NONE;
             break;
         case TSFADE_OUT_WHITE:
+#ifdef PAL
             DispFade.FadeOutStart(1.2f * CScript.fade_speed, 1);
+#else
+            DispFade.FadeOutStart(CScript.fade_speed, 1);
+#endif
             CScript.fade = TSFADE_NONE;
             break;
     }
@@ -644,7 +660,11 @@ static void DrawProcess() {
 
         if (StartDisp) {
             TexManager.ReloadTexture(Vif1Packet, 20);
+#ifdef PAL
             set2DSprite(GetVif1Packet(), TexManager.GetTexture("start2", -1), CRect<int>(192, 392, 256, 32), CRect<int>(0, 0, 256, 32), fade);
+#else
+            set2DSprite(GetVif1Packet(), TexManager.GetTexture("start2", -1), CRect<int>(192, 360, 256, 32), CRect<int>(0, 0, 256, 32), fade);
+#endif
             fade = (fade + 2) & 127;
         }
 

@@ -256,7 +256,11 @@ void FaceChange(int actor_no) {
             CScript__2.obj[actor_no].mouth_time -= CScript__2.motion_step;
 
             if (CScript__2.obj[actor_no].talk) {
+#ifdef PAL
                 if (rand() % 5 == 0) {
+#else
+                if ((int) (100.0f * CScript__2.obj[actor_no].mouth_time) % 6 == 0) {
+#endif
                     CScript__2.obj[actor_no].mouth = rand() % 4;
                 }
             }
@@ -312,6 +316,9 @@ void OpB_InitProcess() {
         {0,                                                 0,  0},
         {0,                                                 19, 0},
         {0,                                                 19, 0},
+#ifndef PAL
+        {0,                                                 19, 0},
+#endif
         {0,                                                 2,  0},
         {"",                                                0,  0}
     };
@@ -335,6 +342,7 @@ void OpB_InitProcess() {
     texture_list[18].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     texture_list[19].name = (char *) GetPackFile(read_buffer, "pause.img", 0);
 
+#ifdef PAL
     switch (LanguageCode) {
         case LANG_JAPANESE:
             texture_list[20].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
@@ -360,6 +368,11 @@ void OpB_InitProcess() {
     }
 
     texture_list[21].name = (char *) GetPackFile(read_buffer, "p09a01an.img", 0);
+#else
+    texture_list[20].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
+    texture_list[21].name = (char *) GetPackFile(read_buffer, "start2.img", 0);
+    texture_list[22].name = (char *) GetPackFile(read_buffer, "p09a01an.img", 0);
+#endif
 
     TexManager.Initialize(16352);
     TexManager.LoadTextureBlock(-1, texture_list);
@@ -649,6 +662,9 @@ void OpB_InitProcess2() {
         {0,                                                 0,  0},
         {0,                                                 19, 0},
         {0,                                                 19, 0},
+#ifndef PAL
+        {0,                                                 19, 0},
+#endif
         {0,                                                 2,  0},
         {"",                                                0,  0}
     };
@@ -668,6 +684,7 @@ void OpB_InitProcess2() {
     texture_list[14].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     texture_list[15].name = (char *) GetPackFile(read_buffer, "pause.img", 0);
 
+#ifdef PAL
     switch (LanguageCode) {
         case LANG_JAPANESE:
             texture_list[16].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
@@ -693,6 +710,11 @@ void OpB_InitProcess2() {
     }
 
     texture_list[17].name = (char *) GetPackFile(read_buffer, "p09a01an.img", 0);
+#else
+    texture_list[16].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
+    texture_list[17].name = (char *) GetPackFile(read_buffer, "start2.img", 0);
+    texture_list[18].name = (char *) GetPackFile(read_buffer, "p09a01an.img", 0);
+#endif
 
     TexManager.Initialize(16352);
     TexManager.LoadTextureBlock(-1, texture_list);

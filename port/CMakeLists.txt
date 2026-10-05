@@ -8,7 +8,21 @@
 # the Metrowerks runtime, the functions that touch the hardware directly and
 # those written in assembly.
 #
-# The port is always the PAL release.
+# DC_REGION picks the release the game's code is built as: PAL (the default) or
+# NTSC, which reads the data of an NTSC 1.02 disc.
+
+set(DC_REGION PAL CACHE STRING "Release the port is built as: PAL or NTSC")
+set_property(CACHE DC_REGION PROPERTY STRINGS PAL NTSC)
+if(NOT DC_REGION MATCHES "^(PAL|NTSC)$")
+    message(FATAL_ERROR "DC_REGION must be PAL or NTSC, not ${DC_REGION}")
+endif()
+# The height of the game's 2D frame, which the host renderer (built without the game's defines)
+# also needs: PAL's picture is 640x480, NTSC's 640x448.
+if(DC_REGION STREQUAL "PAL")
+    add_compile_definitions(DC_LOGICAL_HEIGHT=480.0f)
+else()
+    add_compile_definitions(DC_LOGICAL_HEIGHT=448.0f)
+endif()
 
 if(NOT CMAKE_CXX_COMPILER)
     set(CMAKE_CXX_COMPILER clang++)
@@ -86,7 +100,7 @@ endforeach()
 # integers, narrowing in braced initialisers and the register keyword.
 add_library(dc_options INTERFACE)
 # PORT leaves out the functions ps2/src writes in MIPS assembly.
-target_compile_definitions(dc_options INTERFACE PORT PAL)
+target_compile_definitions(dc_options INTERFACE PORT $<$<STREQUAL:${DC_REGION},PAL>:PAL>)
 target_include_directories(dc_options INTERFACE
     ${CMAKE_SOURCE_DIR}/port/include ${CMAKE_SOURCE_DIR}/ps2/include ${CMAKE_SOURCE_DIR}/ps2/include/sce)
 target_compile_options(dc_options INTERFACE
@@ -199,6 +213,7 @@ add_library(dc_host OBJECT ${HOST_SOURCES} ${SHADER_HEADERS})
 target_include_directories(dc_host PRIVATE ${PORT_DIR} ${SHADER_HEADER_DIR})
 target_link_libraries(dc_host PRIVATE SDL3::SDL3 Vulkan::Vulkan nlohmann_json::nlohmann_json)
 target_compile_options(dc_host PRIVATE -Wall -ffunction-sections -fdata-sections)
+target_compile_definitions(dc_host PRIVATE DC_REGION_TICK_RATE=$<IF:$<STREQUAL:${DC_REGION},PAL>,50.0,60.0>)
 
 add_library(dc_port OBJECT ${PORT_LIB_SOURCES})
 target_link_libraries(dc_port PRIVATE dc_options SDL3::SDL3 Vulkan::Vulkan)

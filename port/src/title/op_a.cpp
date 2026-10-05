@@ -220,6 +220,9 @@ static void LoadTexture() {
         {0,                                                 0,  0},
         {0,                                                 19, 0},
         {0,                                                 19, 0},
+#ifndef PAL
+        {0,                                                 19, 0},
+#endif
         {0,                                                 6,  0},
         {"",                                                0,  0}
     };
@@ -250,6 +253,7 @@ static void LoadTexture() {
     texture_list[24].name = (char *) GetPackFile(read_buffer, "fire.img", 0);
     texture_list[25].name = (char *) GetPackFile(read_buffer, "pause.img", 0);
 
+#ifdef PAL
     switch (LanguageCode) {
         case LANG_JAPANESE:
             texture_list[26].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
@@ -275,6 +279,11 @@ static void LoadTexture() {
     }
 
     texture_list[27].name = (char *) GetPackFile(read_buffer, "ashikage.img", 0);
+#else
+    texture_list[26].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
+    texture_list[27].name = (char *) GetPackFile(read_buffer, "start2.img", 0);
+    texture_list[28].name = (char *) GetPackFile(read_buffer, "ashikage.img", 0);
+#endif
 
     TexManager.LoadTextureBlock(-1, texture_list);
 
@@ -589,13 +598,21 @@ void OpA_DrawProcess() {
     }
 
     if (CScript__2.obj[6].disp && !Pause) {
+#ifdef PAL
         if (DanceWait < 2.0f || DanceWait > 490.0f) {
+#else
+        if (DanceWait < 2.0f || DanceWait > 480.0f) {
+#endif
             Chara__3[6].Step();
             Chara__3[7].Step();
         }
 
+#ifdef PAL
         // Advanced by a fifth more per frame to keep the 60 Hz timing at 50 Hz.
         DanceWait += 1.2f;
+#else
+        DanceWait += 1.0f;
+#endif
 
         if (DanceWait > 10000) {
             DanceWait = 10000;
@@ -1194,7 +1211,11 @@ void OpA_SoundProcess() {
     {
         static int flg = 0;
 
+#ifdef PAL
         if (CScript__2.camera_start == 44 && Cam__2[SceneNp__2].motion_type.state.time > 252.0) {
+#else
+        if (CScript__2.camera_start == 44 && Cam__2[SceneNp__2].motion_type.state.time > 249.0) {
+#endif
             if (flg == 0) {
                 while (ReadBGSync())
                     ;

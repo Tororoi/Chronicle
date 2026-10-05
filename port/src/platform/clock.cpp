@@ -7,6 +7,8 @@
 #include <thread>
 #include <vector>
 
+const double kRegionTickRate = DC_REGION_TICK_RATE;
+
 namespace {
 
 using SteadyClock = std::chrono::steady_clock;
@@ -16,7 +18,7 @@ using SteadyClock = std::chrono::steady_clock;
 constexpr auto kSpinMargin = std::chrono::microseconds(1500);
 
 struct ClockState {
-    double                  hertz = 50.0;
+    double                  hertz = kRegionTickRate;
     bool                    unbounded = false;
     bool                    anchored = false;
     SteadyClock::time_point anchor = {};

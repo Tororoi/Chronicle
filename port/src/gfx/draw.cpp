@@ -687,11 +687,12 @@ void Transfer(VkCommandBuffer cmd, Image &src, const VkOffset3D src_offsets[2], 
 LogicalMapping MainMapping(uint32_t width, uint32_t height) {
     float w = static_cast<float>(width);
     float h = static_cast<float>(height);
-    float scale = std::min(w / kLogicalWidth, h / kLogicalHeight);
+    float scale = std::min(w / kLogicalWidth, h / kFrameHeight);
+    float scale_y = scale * (kFrameHeight / kLogicalHeight);
     return LogicalMapping{scale,
-                          scale,
+                          scale_y,
                           std::floor((w - kLogicalWidth * scale) * 0.5f),
-                          std::floor((h - kLogicalHeight * scale) * 0.5f),
+                          std::floor((h - kLogicalHeight * scale_y) * 0.5f),
                           width,
                           height};
 }

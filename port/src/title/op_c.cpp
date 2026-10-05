@@ -234,7 +234,11 @@ void FaceChangeC(int actor_no) {
         CScript__2.obj[actor_no].mouth_time -= CScript__2.motion_step;
 
         if (CScript__2.obj[actor_no].talk) {
+#ifdef PAL
             if (rand() % 5 == 0) {
+#else
+            if ((int) (100.0f * CScript__2.obj[actor_no].mouth_time) % 6 == 0) {
+#endif
                 CScript__2.obj[actor_no].mouth = rand() % 4;
             }
         }
@@ -275,7 +279,11 @@ void OpC_InitProcess() {
         {0,                                                 10, 0},
         {0,                                                 10, 0},
         {0,                                                 10, 0},
+#ifdef PAL
         {0,                                                 13, 0},
+#else
+        {0,                                                 10, 0},
+#endif
         {0,                                                 10, 0},
         {0,                                                 11, 0},
         {0,                                                 11, 0},
@@ -286,6 +294,9 @@ void OpC_InitProcess() {
         {0,                                                 26, 0},
         {0,                                                 19, 0},
         {0,                                                 19, 0},
+#ifndef PAL
+        {0,                                                 19, 0},
+#endif
         {0,                                                 0,  0}
     };
 
@@ -305,6 +316,7 @@ void OpC_InitProcess() {
     tex[19].name = (char *) GetPackFile(read_buffer, "syst04.img", 0);
     tex[20].name = (char *) GetPackFile(read_buffer, "pause.img", 0);
 
+#ifdef PAL
     switch (LanguageCode) {
         case LANG_JAPANESE:
             tex[21].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
@@ -328,6 +340,10 @@ void OpC_InitProcess() {
             tex[21].name = (char *) GetPackFile(read_buffer, "pause_s.img", 0);
             break;
     }
+#else
+    tex[21].name = (char *) GetPackFile(read_buffer, "pause_e.img", 0);
+    tex[22].name = (char *) GetPackFile(read_buffer, "start2.img", 0);
+#endif
 
     TexManager.Initialize(16352);
     TexManager.LoadTextureBlock(-1, tex);
@@ -347,10 +363,18 @@ void OpC_InitProcess() {
     tex[3].block_no = 2;
     tex[3].mipmap = false;
     tex[4].name = (char *) GetPackFile(read_buffer, "p03a01.img", 0);
+#ifdef PAL
     tex[4].block_no = 14;
+#else
+    tex[4].block_no = 13;
+#endif
     tex[4].mipmap = false;
     tex[5].name = (char *) GetPackFile(read_buffer, "p08a01.img", 0);
+#ifdef PAL
     tex[5].block_no = 15;
+#else
+    tex[5].block_no = 14;
+#endif
     tex[5].mipmap = false;
     tex[6].name = (char *) GetPackFile(read_buffer, "p07a01.img", 0);
     tex[6].block_no = 7;
@@ -370,6 +394,7 @@ void OpC_InitProcess() {
 
     TexManager.LoadTextureBlock(-1, tex);
 
+#ifdef PAL
     CharaTex__2[11] = 2;
     CharaTex__2[12] = 14;
     CharaTex__2[13] = 15;
@@ -377,6 +402,15 @@ void OpC_InitProcess() {
     CharaTex__2[11] = 2;
     CharaTex__2[12] = 14;
     CharaTex__2[13] = 15;
+#else
+    CharaTex__2[11] = 2;
+    CharaTex__2[12] = 13;
+    CharaTex__2[13] = 14;
+    CharaTex__2[9] = 3;
+    CharaTex__2[11] = 2;
+    CharaTex__2[12] = 13;
+    CharaTex__2[13] = 14;
+#endif
     CharaTex__2[14] = 4;
     CharaTex__2[15] = 5;
     CharaTex__2[16] = 6;
@@ -384,10 +418,17 @@ void OpC_InitProcess() {
     CharaTex__2[18] = 8;
     CharaTex__2[19] = 9;
     CharaTex__2[20] = 9;
+#ifdef PAL
     CharaTex__2[1] = 16;
     CharaTex__2[4] = 16;
     CharaTex__2[3] = 17;
     CharaTex__2[5] = 18;
+#else
+    CharaTex__2[1] = 15;
+    CharaTex__2[4] = 15;
+    CharaTex__2[3] = 16;
+    CharaTex__2[5] = 17;
+#endif
 
     CSnd.SetReverb(0, 3, 20);
     CSnd.SetReverb(1, 4, 5);
@@ -553,7 +594,11 @@ void OpC_InitProcess2() {
         ;
 
     TexManager.DeleteTextureBlock(0);
+#ifdef PAL
     TexManager.DeleteTextureBlock(15);
+#else
+    TexManager.DeleteTextureBlock(14);
+#endif
     TexManager.CleanUpBuffer();
 
     LOADTEXTURE_INFO2 tex[15] = {
@@ -582,11 +627,19 @@ void OpC_InitProcess2() {
     TexManager.LoadTextureBlock(0, tex);
 
     tex[0].name = (char *) GetPackFile(read_buffer, "ashikage.img", 0);
+#ifdef PAL
     tex[0].block_no = 18;
+#else
+    tex[0].block_no = 17;
+#endif
     tex[0].mipmap = false;
     tex[1].name = 0;
 
+#ifdef PAL
     TexManager.LoadTextureBlock(18, tex);
+#else
+    TexManager.LoadTextureBlock(17, tex);
+#endif
 
     CharaDataBuffer__2[6].used = 0;
 
@@ -691,7 +744,9 @@ void OpC_InitProcess3() {
     TexManager.DeleteTextureBlock(4);
     TexManager.DeleteTextureBlock(9);
     TexManager.DeleteTextureBlock(10);
+#ifdef PAL
     TexManager.DeleteTextureBlock(13);
+#endif
     TexManager.CleanUpBuffer();
 
     LOADTEXTURE_INFO2 tex[4];
@@ -710,25 +765,49 @@ void OpC_InitProcess3() {
     TexManager.LoadTextureBlock(10, tex);
 
     tex[0].name = (char *) GetPackFile(read_buffer, "c08a01.img", 0);
+#ifdef PAL
     tex[0].block_no = 16;
+#else
+    tex[0].block_no = 15;
+#endif
     tex[0].mipmap = false;
     tex[1].name = 0;
 
+#ifdef PAL
     TexManager.LoadTextureBlock(16, tex);
+#else
+    TexManager.LoadTextureBlock(15, tex);
+#endif
 
     tex[0].name = (char *) GetPackFile(read_buffer, "c09a01.img", 0);
+#ifdef PAL
     tex[0].block_no = 17;
+#else
+    tex[0].block_no = 16;
+#endif
     tex[0].mipmap = false;
     tex[1].name = 0;
 
+#ifdef PAL
     TexManager.LoadTextureBlock(17, tex);
+#else
+    TexManager.LoadTextureBlock(16, tex);
+#endif
 
     tex[0].name = (char *) GetPackFile(read_buffer, "beem.img", 0);
+#ifdef PAL
     tex[0].block_no = 18;
+#else
+    tex[0].block_no = 17;
+#endif
     tex[0].mipmap = false;
     tex[1].name = 0;
 
+#ifdef PAL
     TexManager.LoadTextureBlock(18, tex);
+#else
+    TexManager.LoadTextureBlock(17, tex);
+#endif
 
     CharaDataBuffer__2[6].used = 0;
     Chara__3[1].LoadPackData(read_buffer, "04c08a.cfg", &CharaDataBuffer__2[6], 0);
@@ -825,8 +904,16 @@ void OpC_InitProcess5() {
     while (ReadBGSync())
         ;
 
+#ifdef PAL
     TexManager.DeleteTextureBlock(14);
+#else
+    TexManager.DeleteTextureBlock(13);
+#endif
+#ifdef PAL
     TexManager.DeleteTextureBlock(18);
+#else
+    TexManager.DeleteTextureBlock(17);
+#endif
     TexManager.DeleteTextureBlock(0);
     TexManager.CleanUpBuffer();
 
@@ -856,20 +943,40 @@ void OpC_InitProcess5() {
     TexManager.LoadTextureBlock(0, tex);
 
     tex[0].name = (char *) GetPackFile(read_buffer, "smoke.img", 0);
+#ifdef PAL
     tex[0].block_no = 18;
+#else
+    tex[0].block_no = 17;
+#endif
     tex[0].mipmap = false;
     tex[1].name = (char *) GetPackFile(read_buffer, "beem.img", 0);
+#ifdef PAL
     tex[1].block_no = 18;
+#else
+    tex[1].block_no = 17;
+#endif
     tex[1].mipmap = false;
     tex[2].name = (char *) GetPackFile(read_buffer, "bakuhatu.img", 0);
+#ifdef PAL
     tex[2].block_no = 18;
+#else
+    tex[2].block_no = 17;
+#endif
     tex[2].mipmap = false;
     tex[3].name = (char *) GetPackFile(read_buffer, "sunakemuri.img", 0);
+#ifdef PAL
     tex[3].block_no = 18;
+#else
+    tex[3].block_no = 17;
+#endif
     tex[3].mipmap = false;
     tex[4].name = 0;
 
+#ifdef PAL
     TexManager.LoadTextureBlock(18, tex);
+#else
+    TexManager.LoadTextureBlock(17, tex);
+#endif
 
     CharaDataBuffer__2[6].used = 0;
     MapLoad2();
@@ -907,11 +1014,19 @@ void OpC_InitProcess5() {
     Chara__3[9].motion_type.state.playing_no = 0;
 
     tex[0].name = (char *) GetPackFile(read_buffer, "p08a01.img", 0);
+#ifdef PAL
     tex[0].block_no = 15;
+#else
+    tex[0].block_no = 14;
+#endif
     tex[0].mipmap = false;
     tex[1].name = 0;
 
+#ifdef PAL
     TexManager.LoadTextureBlock(15, tex);
+#else
+    TexManager.LoadTextureBlock(14, tex);
+#endif
     Chara__3[13].LoadPackData(read_buffer, "04p08a.cfg", &CharaDataBuffer__2[6], 0);
 
     CFrameAttr attr13;
@@ -1650,18 +1765,34 @@ void OpC_MotionProcess() {
 
     switch (CScript__2.camera_start) {
         case 96:
+#ifdef PAL
             Fuusya[1].step[2] = -0.12f * 1.2f;
+#else
+            Fuusya[1].step[2] = -0.12f;
+#endif
             break;
 
         case 97:
             d = 2.0f;
+#ifdef PAL
             Fuusya[1].step[2] = -0.04f * 1.2f;
+#else
+            Fuusya[1].step[2] = -0.04f;
+#endif
             break;
 
         case 100:
             if (Cam__2[SceneNp__2].motion_type.state.time < 258.0f) {
+#ifdef PAL
                 step = 0.025f * 1.2f;
+#else
+                step = 0.025f;
+#endif
+#ifdef PAL
                 Fuusya[1].step[2] = -0.0048f * 1.2f;
+#else
+                Fuusya[1].step[2] = -0.0048f;
+#endif
 
                 if (FireStep >= 1.0f) {
                     FireStep = 0.0f;
@@ -1682,8 +1813,16 @@ void OpC_MotionProcess() {
                     OP_MainCamera.SetRef(ref);
                 }
 
+#ifdef PAL
                 step = 0.5f * 1.2f;
+#else
+                step = 0.5f;
+#endif
+#ifdef PAL
                 Fuusya[1].step[2] = -10.0f * 1.2f;
+#else
+                Fuusya[1].step[2] = -10.0f;
+#endif
                 FireStep = 1.0f;
             }
 
@@ -1752,7 +1891,11 @@ void OpC_SoundProcess() {
             DanceBgmCnt = DanceBgmCnt + 1;
         }
 
+#ifdef PAL
         if (DanceBgmCnt == 53) {
+#else
+        if (DanceBgmCnt == 63) {
+#endif
             OpBgmSqPort = 0;
             OpBgmPlay();
         }
@@ -1842,8 +1985,12 @@ void OpC_SoundProcess() {
     }
 
     for (int i = 0; i < 43; i++) {
+#ifdef PAL
         // The table counts 60 Hz ticks; the 50 Hz count reaches the same moment at five sixths.
         if (SndCnt == SndInfo[i].count * 5 / 6) {
+#else
+        if (SndCnt == SndInfo[i].count) {
+#endif
             OpPlayVolSE(SndInfo[i].group, SndInfo[i].no, SndInfo[i].voice, 1.0f);
         }
     }
@@ -1871,7 +2018,11 @@ void OpC_SoundProcess() {
         motion_frame = (int) Chara__3[11].motion_type.state.time;
 
         if (wait == 0) {
+#ifdef PAL
             if (motion_frame > 73.0f && motion_frame < 76.0f) {
+#else
+            if (motion_frame > 73.0f && motion_frame < 75.0f) {
+#endif
                 if (footstep_ground == 40) {
                     OpPlayVolPanSE(position, 10.0f, 400.0f, MIDI_PORT_SE_DEFAULT, 21, 20);
                 } else {
@@ -1879,7 +2030,11 @@ void OpC_SoundProcess() {
                 }
 
                 wait = 4;
+#ifdef PAL
             } else if (motion_frame > 83.0f && motion_frame < 86.0f) {
+#else
+            } else if (motion_frame > 83.0f && motion_frame < 85.0f) {
+#endif
                 if (footstep_ground == 40) {
                     OpPlayVolPanSE(position, 10.0f, 400.0f, MIDI_PORT_SE_DEFAULT, 21, 21);
                 } else {
@@ -1902,10 +2057,18 @@ void OpC_SoundProcess() {
         motion_frame = (int) Chara__3[11].motion_type.state.time;
 
         if (wait == 0) {
+#ifdef PAL
             if (motion_frame > 258.0f && motion_frame < 261) {
+#else
+            if (motion_frame > 258.0f && motion_frame < 260.0f) {
+#endif
                 OpPlayVolPanSE(position, 10.0f, 400.0f, MIDI_PORT_SE_DEFAULT, 21, 20);
                 wait = 4;
+#ifdef PAL
             } else if (motion_frame > 268.0f && motion_frame < 271) {
+#else
+            } else if (motion_frame > 268.0f && motion_frame < 270.0f) {
+#endif
                 OpPlayVolPanSE(position, 10.0f, 400.0f, MIDI_PORT_SE_DEFAULT, 21, 21);
                 wait = 4;
             }
@@ -1923,10 +2086,18 @@ void OpC_SoundProcess() {
         motion_frame = (int) Chara__3[13].motion_type.state.time;
 
         if (wait == 0) {
+#ifdef PAL
             if (motion_frame > 123.0f && motion_frame < 126.0f) {
+#else
+            if (motion_frame > 123.0f && motion_frame < 125.0f) {
+#endif
                 OpPlayVolPanSE(position, 10.0f, (float) (wait - wait + 300), MIDI_PORT_SE_DEFAULT, 21, 20);
                 wait = 4;
+#ifdef PAL
             } else if (motion_frame > 133.0f && motion_frame < 136.0f) {
+#else
+            } else if (motion_frame > 133.0f && motion_frame < 135.0f) {
+#endif
                 OpPlayVolPanSE(position, 10.0f, (float) (wait - wait + 300), MIDI_PORT_SE_DEFAULT, 21, 21);
                 wait = 4;
             }
@@ -1944,10 +2115,18 @@ void OpC_SoundProcess() {
         motion_frame = (int) Chara__3[12].motion_type.state.time;
 
         if (wait == 0) {
+#ifdef PAL
             if (motion_frame > 33.0f && motion_frame < 36.0f) {
+#else
+            if (motion_frame > 33.0f && motion_frame < 35.0f) {
+#endif
                 OpPlayVolPanSE(position, 10.0f, (float) (wait - wait + 300), MIDI_PORT_SE_DEFAULT, 21, 20);
                 wait = 4;
+#ifdef PAL
             } else if (motion_frame > 43.0f && motion_frame < 46.0f) {
+#else
+            } else if (motion_frame > 43.0f && motion_frame < 45.0f) {
+#endif
                 OpPlayVolPanSE(position, 10.0f, 300.0f, MIDI_PORT_SE_DEFAULT, 21, 21);
                 wait = 4;
             }
@@ -2020,6 +2199,7 @@ void OpC_DrawProcess() {
         case OP_SCENE_NORUNE_BURNING:
             TexManager.ReloadTexture(Vif1Packet, 10);
 
+#ifdef PAL
             // Objects 1-17 and 68-72 take their images from block 13, so they are drawn once it is loaded.
             for (int i = 0; i < 74; i++) {
                 if (i > 0 && (i <= 17 || i >= 68) && i <= 72) {
@@ -2046,6 +2226,16 @@ void OpC_DrawProcess() {
                     object.Draw();
                 }
             }
+#else
+            for (int i = 0; i < 74; i++) {
+                CMapObject   &object = OP_NornMapObj[i];
+                sceVu0FVECTOR position;
+
+                sceVu0CopyVector(position, object.pos);
+                LightSet(position[0], position[1], position[2], 0);
+                object.Draw();
+            }
+#endif
 
             if (CScript__2.camera_start == 100 && Cam__2[SceneNp__2].motion_type.state.time > 262.0f) {
                 CMapObject   &object = OP_NornMapObj[75];
@@ -2090,6 +2280,7 @@ void OpC_DrawProcess() {
         default:
             TexManager.ReloadTexture(Vif1Packet, 10);
 
+#ifdef PAL
             // Objects 1-15 and 66-73 take their images from block 13, so they are drawn once it is loaded.
             for (int i = 0; i < 75; i++) {
                 if (i > 0 && (i <= 15 || i >= 66) && i <= 73) {
@@ -2116,6 +2307,16 @@ void OpC_DrawProcess() {
                     object.Draw();
                 }
             }
+#else
+            for (int i = 0; i < 75; i++) {
+                CMapObject   &object = OP_NornMapObj[i];
+                sceVu0FVECTOR position;
+
+                sceVu0CopyVector(position, object.pos);
+                LightSet(position[0], position[1], position[2], 0);
+                object.Draw();
+            }
+#endif
 
             TexManager.ReloadTexture(Vif1Packet, 11);
 
@@ -2375,7 +2576,11 @@ void OpC_DrawProcess() {
     }
 
     if (CScript__2.scene == OP_SCENE_NORUNE_BURNING) {
+#ifdef PAL
         TexManager.ReloadTexture(Vif1Packet, 18);
+#else
+        TexManager.ReloadTexture(Vif1Packet, 17);
+#endif
         SmokeProcess();
     }
 
@@ -2401,7 +2606,11 @@ void OpC_DrawProcess() {
             CScript__2.bom_req = false;
         }
 
+#ifdef PAL
         TexManager.ReloadTexture(Vif1Packet, 18);
+#else
+        TexManager.ReloadTexture(Vif1Packet, 17);
+#endif
 
         int dust;
 
@@ -2678,7 +2887,11 @@ static void InchikiShadow() {
 static void DrawShadow(int shadow_no, float x, float y, float z) {
     sceVu0FVECTOR ambient = {0.0f, 0.0f, 0.0f, 54.0f};
 
+#ifdef PAL
     TexManager.ReloadTexture(Vif1Packet, 18);
+#else
+    TexManager.ReloadTexture(Vif1Packet, 17);
+#endif
     ambient[3] = ambient[3] - 10.0f * y;
 
     if (ambient[3] > 0.0f) {
@@ -2711,11 +2924,19 @@ static void MajinBeemProcess() {
     if (CScript__2.beem_req) {
         float speed;
 
+#ifdef PAL
         if (CScript__2.scene == OP_SCENE_MAJIN) {
             speed = 5.4f;
         } else {
             speed = 9.6f;
         }
+#else
+        if (CScript__2.scene == OP_SCENE_MAJIN) {
+            speed = 4.5f;
+        } else {
+            speed = 8.0f;
+        }
+#endif
 
         int beam = CScript__2.beem_no;
 
@@ -2822,7 +3043,11 @@ static void MajinBeemProcess() {
         CScript__2.beem_req = false;
     }
 
+#ifdef PAL
     TexManager.ReloadTexture(Vif1Packet, 18);
+#else
+    TexManager.ReloadTexture(Vif1Packet, 17);
+#endif
 
     for (int i = 0; i < 3; i++) {
         if (!Pause) {

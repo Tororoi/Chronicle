@@ -165,7 +165,11 @@ void OpeningInit() {
     PassReadBuffer = testBuffer.Alloc(15000);
     SetDataBuffer(&MapDataBuffer, 159500);
     SetDataBuffer(&WaterBuffer__2, 30000);
+#ifdef PAL
     SetDataBuffer(&TextureData, 365000);
+#else
+    SetDataBuffer(&TextureData, 355000);
+#endif
     SetPacketReadBuffer(40000, 273000);
     OP_MainCamera.SetRef(0, 0.0f, 0.0f, 0.0f);
     OP_MainCamera.SetPos(0, 0.0f, 0.0f, 0.0f);
@@ -176,7 +180,11 @@ void OpeningInit() {
     OP_MainCamera.SetSpeed(0.0f);
     MGSetRenderInfo(800.0f, 6.0f, 65535);
     wait_now_loading_vsync();
+#ifdef PAL
     CScript__2.Load("opdat/opening.pal");
+#else
+    CScript__2.Load("opdat/opening.scr");
+#endif
     wait_now_loading_vsync();
     LoadMessage();
     wait_now_loading_vsync();
@@ -223,6 +231,7 @@ static void LoadMessage() {
     Mes1.grow_x = 310;
     Mes1.grow_y = 210;
 
+#ifdef PAL
     switch (LanguageCode) {
         case LANG_JAPANESE:
             LoadFile("opdat/optext_0.mes", MesBuffer, 0);
@@ -246,6 +255,31 @@ static void LoadMessage() {
             LoadFile("opdat/optext_6.mes", MesBuffer, 0);
             break;
     }
+#else
+    switch (LanguageCode) {
+        case LANG_JAPANESE:
+            LoadFile("opdat/fconv.bin", MesBuffer, 0);
+            break;
+        case LANG_ENGLISH_US:
+            LoadFile("opdat/usa/fconv.bin", MesBuffer, 0);
+            break;
+        case LANG_ENGLISH_UK:
+            LoadFile("opdat/usa/fconv.bin", MesBuffer, 0);
+            break;
+        case LANG_FRENCH:
+            LoadFile("opdat/optext_3.mes", MesBuffer, 0);
+            break;
+        case LANG_GERMAN:
+            LoadFile("opdat/optext_4.mes", MesBuffer, 0);
+            break;
+        case LANG_ITALIAN:
+            LoadFile("opdat/optext_5.mes", MesBuffer, 0);
+            break;
+        case LANG_SPANISH:
+            LoadFile("opdat/usa/fconv.bin", MesBuffer, 0);
+            break;
+    }
+#endif
 
     Mes1.buff = (short *) MesBuffer;
     Mes1.text = (char *) MesBuffer;
@@ -699,19 +733,35 @@ static void MotionProcess() {
     // PAL runs at 50 frames a second, so its fade speeds are raised by a fifth.
     switch (CScript__2.fade) {
         case TSFADE_IN_BLACK:
+#ifdef PAL
             DispFade.FadeInStart(1.2f * CScript__2.fade_speed, 0);
+#else
+            DispFade.FadeInStart(CScript__2.fade_speed, 0);
+#endif
             CScript__2.fade = TSFADE_NONE;
             break;
         case TSFADE_OUT_BLACK:
+#ifdef PAL
             DispFade.FadeOutStart(1.2f * CScript__2.fade_speed, 0);
+#else
+            DispFade.FadeOutStart(CScript__2.fade_speed, 0);
+#endif
             CScript__2.fade = TSFADE_NONE;
             break;
         case TSFADE_IN_WHITE:
+#ifdef PAL
             DispFade.FadeInStart(1.2f * CScript__2.fade_speed, 1);
+#else
+            DispFade.FadeInStart(CScript__2.fade_speed, 1);
+#endif
             CScript__2.fade = TSFADE_NONE;
             break;
         case TSFADE_OUT_WHITE:
+#ifdef PAL
             DispFade.FadeOutStart(1.2f * CScript__2.fade_speed, 1);
+#else
+            DispFade.FadeOutStart(CScript__2.fade_speed, 1);
+#endif
             CScript__2.fade = TSFADE_NONE;
             break;
     }
@@ -838,7 +888,9 @@ static void SoundProcess() {
     if (CScript__2.bgm_fade != 0) {
         switch (CScript__2.se_kind) {
             case TSSE_ALL:
+#ifdef PAL
                 CScript__2.bgm_fade = 1.2f * CScript__2.bgm_fade;
+#endif
                 CSnd.Fade(MIDI_PORT_BGM, (float) CScript__2.bgm_fade / 2.0f, CScript__2.se_fade_time);
                 CSnd.Fade(MIDI_PORT_AMBIENT, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
                 CSnd.Fade(MIDI_PORT_UNK_2, (float) CScript__2.bgm_fade, CScript__2.se_fade_time);
@@ -958,6 +1010,7 @@ static void DrawProcess() {
         MGFillBox(CRect<int>(0, 0, 10240, SCREEN_HEIGHT * 8), 0, 0, 0, 64);
         TexManager.ReloadTexture(Vif1Packet, 19);
 
+#ifdef PAL
         switch (LanguageCode) {
             case LANG_JAPANESE:
                 set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause", -1), CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
@@ -981,6 +1034,9 @@ static void DrawProcess() {
                 set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_s", -1), CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
                 break;
         }
+#else
+        set2DSprite(GetVif1Packet(), TexManager.GetTexture("pause_e", -1), CRect<int>(256, 160, 128, 128), CRect<int>(0, 0, 128, 128), 128);
+#endif
 
         setbilinear(1);
     }
@@ -990,7 +1046,11 @@ static void DrawProcess() {
     CTexture texture;
 
     texture.tex0 = *(u_long *) &tex0;
+#ifdef PAL
     set2DSprite(Vif1Packet, &texture, CRect<int>(0, 0, 640, SCREEN_HEIGHT), CRect<int>(0, 0, 640, SCREEN_HALF_HEIGHT), 128, 128, 128, 40);
+#else
+    set2DSprite(Vif1Packet, &texture, CRect<int>(0, 0, 640, 448), CRect<int>(0, 0, 640, 224), 128, 128, 128, 35);
+#endif
     DispFade.FadeIn(Vif1Packet);
     DispFade.FadeOut(Vif1Packet);
 }

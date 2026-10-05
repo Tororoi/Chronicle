@@ -27,8 +27,10 @@ CRect_i_ mgWindowRect;
 
 // Defined by ps2/src/mglib.cpp without a header declaration.
 extern int           mgWaitVSync;
+#ifdef PAL
 extern int           mgAdjustX;
 extern int           mgAdjustY;
+#endif
 extern sceVu0FVECTOR mgZeroVector;
 extern sceVu0FVECTOR mgUnitVector;
 extern sceVu0FVECTOR mgZeroVector2;
@@ -36,10 +38,14 @@ extern sceVu0FVECTOR mgUnitVector2;
 
 namespace {
 
-// PAL's field buffer is half the frame's height. GS coordinates the game hands to the 2D units
+// The field buffer is half the frame's height. GS coordinates the game hands to the 2D units
 // keep counting field rows (MGPortLogicalY doubles them), so the eye-to-GS step keeps the squeeze
-// that retail baked into view_scaled.
+// that retail baked into view_scaled: a fixed 0.5 on PAL, MGSetViewMatrix's 0.47 on NTSC.
+#ifdef PAL
 constexpr float kFieldSqueeze = 0.5f;
+#else
+constexpr float kFieldSqueeze = 0.47f;
+#endif
 constexpr float kGsCentre = 2048.0f;
 constexpr float kGsDepthRange = 16699999.0f;
 
@@ -338,8 +344,8 @@ void Draw3DMul(float out[4][4], const float a[4][4], const float b[4][4]) {
     std::memcpy(out, result, sizeof(result));
 }
 
-// The logical frame point of an eye-space (x, y, z) is (320 + sx x / z, 240 + sy y / z), the
-// point MGRotTransPers2D gives, and that lands on the target through its logical mapping (with
+// The logical frame point of an eye-space (x, y, z) is (320 + sx x / z, SCREEN_HALF_HEIGHT +
+// 2 kFieldSqueeze sy y / z), the point MGRotTransPers2D gives, and that lands on the target through its logical mapping (with
 // the field-height targets taking half the rows). Depth is a + b / z with the GS Z of
 // MGSetRenderInfo, offset[2] + scale[2] / z, read through MGPortDepth.
 void Draw3DEyeToClip(const RenderInfo &info, float clip[4][4]) {
@@ -353,12 +359,12 @@ void Draw3DEyeToClip(const RenderInfo &info, float clip[4][4]) {
     float               ky = 2.0f * mapping.scale_y * rows / height;
     float               oy = 2.0f * mapping.offset_y / height - 1.0f;
     float               centre_x = info.offset[0] - (kGsCentre - gfx::kLogicalWidth * 0.5f);
-    float               centre_y = info.offset[1] - (kGsCentre - gfx::kLogicalHeight * 0.5f);
+    float               centre_y = info.offset[1] - (kGsCentre - SCREEN_HALF_HEIGHT_F);
 
     std::memset(clip, 0, sizeof(float) * 16);
     clip[0][0] = kx * info.scale[0];
     clip[2][0] = kx * centre_x + ox;
-    clip[1][1] = ky * info.scale[1];
+    clip[1][1] = ky * info.scale[1] * 2.0f * kFieldSqueeze;
     clip[2][1] = ky * centre_y + oy;
     clip[2][2] = (info.offset[2] - 1.0f) / kGsDepthRange;
     clip[3][2] = info.scale[2] / kGsDepthRange;
@@ -479,15 +485,19 @@ void MGInit() {
     GiftagAD.NREG = 1;
     GiftagAD.REGS0 = SCE_GIF_PACKED_AD;
 
+#ifdef PAL
     mgTopVRAM = 0x1E00;
     mgZBufferAdr = 0x1400;
+#endif
 
     mgWindowRect.x = 0;
     mgWindowRect.y = 0;
     mgWindowRect.width = 640;
     mgWindowRect.height = SCREEN_HALF_HEIGHT;
     MGPortCurrent().window = {0.0f, 0.0f, gfx::kLogicalWidth, gfx::kLogicalHeight};
+#ifdef PAL
     MGAdjustScreen(0, 0);
+#endif
 
     mgBackColor[0] = 0.0f;
     mgBackColor[1] = 0.0f;
@@ -508,7 +518,12 @@ void MGInit() {
     mgPixelTest.bits.ate = 1;
     mgPixelTest.bits.atst = 5;
     mgZBuffer = {};
+#ifdef PAL
     mgZBuffer.bits.zbp = mgZBufferAdr >> 5;
+#else
+    // Where NTSC's sceGsSetDefDBuff puts the Z buffer: after the two 640x224 frame buffers.
+    mgZBuffer.bits.zbp = 0x1180 >> 5;
+#endif
     mgZBuffer.bits.psm = SCE_GS_PSMZ24 & 0xF;
 
     mgAlpha = {};
@@ -654,6 +669,7 @@ void MGFlipWaitVSync(int wait) {
     mgWaitVSync = wait;
 }
 
+#ifdef PAL
 // The display position only moved the PAL picture on a television; the clamped values are kept
 // for the save data's screen-position setting, and nothing moves.
 void MGAdjustScreen(int x, int y) {
@@ -666,6 +682,7 @@ void MGAdjustScreen(int x, int y) {
     mgAdjustX = (x >> 1) << 1;
     mgAdjustY = (y >> 1) << 1;
 }
+#endif
 
 sceVif1Packet *GetVif1Packet() {
     return Vif1Packet;

@@ -180,6 +180,7 @@ static int AddStr(CDebugFont *font, char *str) {
     return len;
 }
 
+#ifdef PAL
 void EdDPrintChara(CMainChara *chara) {
     sceVu0FVECTOR vector;
     char          work[128];
@@ -204,7 +205,9 @@ void EdDPrintChara(CMainChara *chara) {
         AddStr(DebugFont, work);
     }
 }
+#endif
 
+#ifdef PAL
 void EdDPrintCamera(CCamera *camera) {
     sceVu0FVECTOR vector;
     char          work[128];
@@ -226,6 +229,7 @@ void EdDPrintCamera(CCamera *camera) {
     sprintf(work, " projection = %7.1f\n", MGGetProjection());
     AddStr(DebugFont, work);
 }
+#endif
 
 void EdDPrintVector(char *name, float *vector) {
     char work[128];
@@ -508,6 +512,7 @@ void EdDMoveChara(CCharacter *character, CCamera *camera) {
     }
 }
 
+#ifdef PAL
 void EdDebugMenu() {
     static int mode = 0;
 
@@ -1182,6 +1187,7 @@ void DM_Flag() {
         select = 0;
     }
 }
+#endif
 
 /* The box drawn as twelve edges of the frame's own corner list, taken to the screen in one go and
    drawn only if every corner survived: a box with one corner behind the eye would otherwise be

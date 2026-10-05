@@ -48,7 +48,7 @@ void setItemToReserved(char *page_name, int x, int y, char *item_name, int dsax,
     MoveImageTest(Vif1Packet, sbp, sbw, 0x13, CRect_i_(x, y, 0x20, 0x20), dbp, dbw, 0x13, dsax, dsay, 0);
 }
 
-// Retail's but for the life and weapon bars' fills, PAL's branch only.
+// Retail's but for the life and weapon bars' fills.
 void topStatusInfo(int y, int selected_item, int floor) {
     int       alpha;
     CTexture *icons;
@@ -260,10 +260,18 @@ void topStatusInfo(int y, int selected_item, int floor) {
         }
 
         if (floor + 1 >= 10) {
+#ifdef PAL
             set2DSprite(Vif1Packet, frame, CRect_i_(x - 4, y + 0xA, 0xE, 0x11), CRect_i_((floor + 1) / 10 * 12, 0x9E, 0xC, 0x12));
+#else
+            set2DSprite(Vif1Packet, frame, CRect_i_(x - 4, y + 0x12, 0xE, 0x11), CRect_i_((floor + 1) / 10 * 12, 0x9E, 0xC, 0x12));
+#endif
         }
 
+#ifdef PAL
         set2DSprite(Vif1Packet, frame, CRect_i_(x + 9, y + 0xA, 0xE, 0x11), CRect_i_((floor + 1) % 10 * 12, 0x9E, 0xC, 0x12));
+#else
+        set2DSprite(Vif1Packet, frame, CRect_i_(x + 9, y + 0x12, 0xE, 0x11), CRect_i_((floor + 1) % 10 * 12, 0x9E, 0xC, 0x12));
+#endif
     }
 
     selected_item *= 40;
@@ -274,8 +282,13 @@ void topStatusInfo(int y, int selected_item, int floor) {
 
     y -= BtActStatus.hud_shake_y;
     alpha = y + 0x6A;
+#ifdef PAL
     set2DSprite(Vif1Packet, icons, CRect_i_(0x18, 0x1AC, 0x2A, 0x1D), CRect_i_(0x78, 0x37, 0x2A, 0x1D), alpha);
     set2DSprite(Vif1Packet, icons, CRect_i_(0x45, 0x1A8, 0x2B, 0x10), CRect_i_(0xA2, 0x37, 0x2B, 0x10), alpha);
+#else
+    set2DSprite(Vif1Packet, icons, CRect_i_(0x18, 0x18C, 0x2A, 0x1D), CRect_i_(0x78, 0x37, 0x2A, 0x1D), alpha);
+    set2DSprite(Vif1Packet, icons, CRect_i_(0x45, 0x188, 0x2B, 0x10), CRect_i_(0xA2, 0x37, 0x2B, 0x10), alpha);
+#endif
     int chara = UserStatus->cur_chara;
     int u = 0;
     int v = 0;
@@ -289,5 +302,9 @@ void topStatusInfo(int y, int selected_item, int floor) {
         v = u = 0x20;
     }
 
+#ifdef PAL
     set2DSprite(Vif1Packet, icons, CRect_i_(0x1D, 0x1A4, 0x20, 0x20), CRect_i_(u, v, 0x20, 0x20), alpha);
+#else
+    set2DSprite(Vif1Packet, icons, CRect_i_(0x1D, 0x184, 0x20, 0x20), CRect_i_(u, v, 0x20, 0x20), alpha);
+#endif
 }

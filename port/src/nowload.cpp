@@ -18,8 +18,12 @@
 
 namespace {
 
-// What retail's 320000-byte stack array holds, plus the sector-rounded tail LoadFile2 writes.
+// What retail's stack array holds, plus the sector-rounded tail LoadFile2 writes.
+#ifdef PAL
 constexpr std::size_t kArchiveBytes = 320000 + 2048;
+#else
+constexpr std::size_t kArchiveBytes = 64000 + 2048;
+#endif
 
 int count;
 
@@ -178,8 +182,13 @@ void init_now_loading(int title_number) {
 
         char sce_logo[] = "SCElogo";
         char l5_logo[] = "L5logo";
+#ifdef PAL
         LoadTexture(sce_logo, archive, &nl_tex, 8000, 10000);
         LoadTexture(l5_logo, archive, &nl_tex2, 9500, 10100);
+#else
+        LoadTexture(sce_logo, archive, &nl_tex, 0x1A40, 10000);
+        LoadTexture(l5_logo, archive, &nl_tex2, 8000, 0x2774);
+#endif
     } else {
         if (path[0] == '\0') {
             return;
@@ -189,7 +198,11 @@ void init_now_loading(int title_number) {
             return;
         }
 
+#ifdef PAL
         LoadTexture((TM2_head *) archive, &nl_tex, 8000, 9000);
+#else
+        LoadTexture((TM2_head *) archive, &nl_tex, 0x1A40, 8000);
+#endif
     }
 
     map_title_no = title_number;
@@ -225,12 +238,16 @@ int VSyncCallBack_Load(int field) {
 
         if (map_title_no == 0x321) {
             if (logo_count == 0) {
+#ifdef PAL
                 // Languages past the first two show a full-screen logo image instead.
                 if (LanguageCode >= LANG_ENGLISH_UK) {
                     Show(&nl_tex, CRect_i_(0, 0x10, 0x280, 0x1C0), CRect_i_(0, 0, 0x280, 0x1C0), (u_char) (int) col_cnt);
                 } else {
                     Show(&nl_tex, CRect_i_(0x60, 0xC0, 0x1C0, 0x40), CRect_i_(0, 0, 0x1C0, 0x40), (u_char) (int) col_cnt);
                 }
+#else
+                Show(&nl_tex, CRect_i_(0x60, 0xC0, 0x1C0, 0x40), CRect_i_(0, 0, 0x1C0, 0x40), (u_char) (int) col_cnt);
+#endif
             }
 
             if (logo_count == 1) {
@@ -242,14 +259,22 @@ int VSyncCallBack_Load(int field) {
             }
 
             if (col_cnt > 128.0f) {
+#ifdef PAL
                 // The logo holds keep their NTSC duration at 50 fields a second.
                 count = Hold(183);
+#else
+                count = Hold(220);
+#endif
                 col_cnt = 128.0f;
                 col_add *= -1.0f;
             }
 
             if (col_cnt < 0.0f) {
+#ifdef PAL
                 count = Hold(83);
+#else
+                count = Hold(100);
+#endif
                 col_cnt = 0.0f;
                 col_add *= -1.0f;
 

@@ -80,7 +80,11 @@ TEST(IntegrationGameloop, LoopResults) {
 
     const Case cases[] = {
         {GAME_MODE_LANGUAGE,     0, GAME_MODE_LANGUAGE,     7,   -1 },
+#ifdef PAL
         {GAME_MODE_LANGUAGE,     1, GAME_MODE_MEMORY_CHECK, -1,  -1 },
+#else
+        {GAME_MODE_LANGUAGE,     1, GAME_MODE_RUSH_MOVIE,   801, -1 },
+#endif
         {GAME_MODE_MEMORY_CHECK, 1, GAME_MODE_RUSH_MOVIE,   801, -1 },
         {GAME_MODE_RUSH_MOVIE,   1, GAME_MODE_RUSH_MOVIE,   7,   800},
         {GAME_MODE_TITLE,        3, GAME_MODE_DUNGEON,      7,   -1 },
@@ -134,7 +138,13 @@ TEST(IntegrationGameloop, FrameBudgetAndStop) {
 // GetGaijiW reads EditGaijiTbl[code] for codes from -0x300: on the PS2 that is the cell count, the
 // last word, of GaijiDataTbl's entry code + 0x300.
 TEST(IntegrationGameloop, LinkAliases) {
-    for (int code = -0x300; code < -0x251; code++) {
+    // The codes whose cell count lies inside GaijiDataTbl: 176 entries on PAL, 158 on NTSC.
+#ifdef PAL
+    constexpr int kLastCode = -0x251;
+#else
+    constexpr int kLastCode = -0x263;
+#endif
+    for (int code = -0x300; code < kLastCode; code++) {
         ASSERT_TRUE(*reinterpret_cast<s32 *>(&EditGaijiTbl[code]) == GaijiDataTbl[code + 0x300][7]);
     }
     // ebattle.cpp's own type for the storage is local to it; only the address matters.
