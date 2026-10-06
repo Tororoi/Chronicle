@@ -735,7 +735,8 @@ PC_OVERRIDE void OpA_DrawProcess() {
         case 10:
         case 24:
         case 25: {
-            float dof[] = {50.0f};
+            // DepthOfField projects both distances at every level.
+            float dof[2] = {50.0f, 50.0f};
 
             DepthOfField(dof, 1, 56, 0);
         } break;

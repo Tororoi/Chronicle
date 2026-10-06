@@ -1093,3 +1093,98 @@ static void setTexAnime() {
    hundredth of a second left on the timer, and the timer running out closes the mouth and ends the
    line. The eyes are whatever the script last asked for. The cache is flushed on both sides of the
    two transfers because the plate is a texture the previous tick drew from and the next one will. */
+
+extern CDataAlloc2<1> CharaDataBuffer__2[7];
+extern CCharacter     Chara__3[23];
+
+namespace {
+
+// Where each dancer's next motion pack was read in the background, and the copy read again when that
+// one has gone.
+u_char g_couple_pack[2][0x180000] __attribute__((aligned(64)));
+
+u_int *CouplePack(u_int *preloaded, char *file, char *config, int dancer) {
+    if (GetPackFile(preloaded, config, NULL) != NULL) {
+        return preloaded;
+    }
+    LoadFile(file, g_couple_pack[dancer], NULL);
+    return (u_int *) g_couple_pack[dancer];
+}
+
+} // namespace
+
+/* The couple's dance, which is ten motion files played end to end. A file is swapped in when the
+   one running reaches its last key and the next pair is started in the background straight after,
+   so the dance runs continuously off a buffer that only ever holds two steps. The script's object
+   loads read into read_buffer as well; one that lands between a pair's read and its swap leaves the
+   second dancer without its pack, and retail then keeps stepping that dancer through keys the first
+   dancer's new data has overwritten. Here a pack that has gone is read again. */
+PC_OVERRIDE void LoadMotionData() {
+    char *motion_files[20][2] = {
+        {"opdat/chara/01p19a1a.chr", "01p19a1a.cfg"},
+        {"opdat/chara/01p19a1b.chr", "01p19a1b.cfg"},
+        {"opdat/chara/01p19a2a.chr", "01p19a2a.cfg"},
+        {"opdat/chara/01p19a2a.chr", "01p19a2a.cfg"},
+        {"opdat/chara/01p19a2b.chr", "01p19a2b.cfg"},
+        {"opdat/chara/01p19a3.chr",  "01p19a3.cfg" },
+        {"opdat/chara/01p19a3b.chr", "01p19a3b.cfg"},
+        {"opdat/chara/01p19a4a.chr", "01p19a4a.cfg"},
+        {"opdat/chara/01p19a4b.chr", "01p19a4b.cfg"},
+        {"opdat/chara/01p19a5.chr",  "01p19a5.cfg" },
+        {"opdat/chara/01p17a1a.chr", "01p17a1a.cfg"},
+        {"opdat/chara/01p17a1b.chr", "01p17a1b.cfg"},
+        {"opdat/chara/01p17a2a.chr", "01p17a2a.cfg"},
+        {"opdat/chara/01p17a2a.chr", "01p17a2a.cfg"},
+        {"opdat/chara/01p17a2b.chr", "01p17a2b.cfg"},
+        {"opdat/chara/01p17a3.chr",  "01p17a3.cfg" },
+        {"opdat/chara/01p17a3b.chr", "01p17a3b.cfg"},
+        {"opdat/chara/01p17a4a.chr", "01p17a4a.cfg"},
+        {"opdat/chara/01p17a4b.chr", "01p17a4b.cfg"},
+        {"opdat/chara/01p17a5.chr",  "01p17a5.cfg" }
+    };
+
+    if (DanceCnt < 10) {
+        if (Chara__3[6].motion_type.state.time > (float) (Chara__3[6].motion_type.motion_info->end - 1)) {
+            if (DanceCnt != 2) {
+                u_int *pack6 = CouplePack((u_int *) ((char *) read_buffer + 0x10C900), motion_files[DanceCnt][0],
+                                          motion_files[DanceCnt][1], 0);
+                u_int *pack7 = CouplePack(read_buffer, motion_files[DanceCnt + 10][0], motion_files[DanceCnt + 10][1], 1);
+
+                CharaDataBuffer__2[6].used = 0;
+                Chara__3[6].LoadPackData(pack6, motion_files[DanceCnt][1], &CharaDataBuffer__2[4], &CharaDataBuffer__2[6], 0);
+                Chara__3[7].LoadPackData(pack7, motion_files[DanceCnt + 10][1], &CharaDataBuffer__2[4], &CharaDataBuffer__2[6], 0);
+            }
+
+            Chara__3[6].motion_type.motion_info->start = noroi[DanceCnt].start;
+            Chara__3[6].motion_type.motion_info->end = noroi[DanceCnt].end;
+            Chara__3[6].motion_type.state.time = (float) Chara__3[6].motion_type.motion_info->start;
+            Chara__3[7].motion_type.motion_info->start = dancer[DanceCnt].start;
+            Chara__3[7].motion_type.motion_info->end = dancer[DanceCnt].end;
+            Chara__3[7].motion_type.state.time = (float) Chara__3[7].motion_type.motion_info->start;
+            DanceCnt++;
+
+            if (DanceCnt != 3 && DanceCnt < 10) {
+                LoadFileBG(motion_files[DanceCnt][0], (u_long128 *) ((char *) read_buffer + 0x10C900), 0);
+                LoadFileBG(motion_files[DanceCnt + 10][0], (u_long128 *) read_buffer, 0);
+            }
+        }
+
+        Chara__3[6].motion_no = 0;
+        Chara__3[6].motion_flags = 0;
+        Chara__3[6].motion_speed = -1.0f;
+
+        if (Chara__3[6].motion_type.state.time > 225.0f) {
+            DanceStart = 1;
+        }
+
+        if (DanceStart == 1) {
+            Chara__3[7].motion_no = 0;
+            Chara__3[7].motion_flags = 0;
+            Chara__3[7].motion_speed = -1.0f;
+        } else {
+            Chara__3[7].motion_no = 1;
+            Chara__3[7].motion_flags = 0;
+            Chara__3[7].motion_speed = -1.0f;
+        }
+    }
+}
